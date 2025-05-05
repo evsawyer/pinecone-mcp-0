@@ -40,7 +40,7 @@ def embed(query_text: str) -> list[float] | None:
         return embedding
     except Exception as e:
         print(f"An error occurred during embedding: {e}")
-        return [f"An error occurred during embedding: {e}"]
+        return None
     
 @mcp.tool()
 def search_pinecone(query_text: str, namespace: str, filter: dict | None = None) -> list[str] | None:
@@ -78,7 +78,7 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
         return "results"
     except Exception as e:
         print(f"An error occurred during Pinecone search: {e}")
-        return "error"
+        return f"An error occurred during Pinecone search: {e}"
     
 @mcp.tool()
 def insert_text(text: str, namespace: str, metadata: dict) -> bool:
