@@ -2,6 +2,7 @@ from fastmcp import FastMCP
 from pinecone import Pinecone, ServerlessSpec
 from openai import OpenAI
 from dotenv import load_dotenv
+import uuid
 import os
 load_dotenv()
 
@@ -62,7 +63,7 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
 
         # Search Pinecone for the most relevant documents
         query_args = {
-            "top_k": 5,
+            "top_k": 3,
             "include_metadata": True,
             "vector": query_embedding,
             "namespace": namespace
@@ -75,7 +76,39 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
         return results
     except Exception as e:
         print(f"An error occurred during Pinecone search: {e}")
-        return None
+        return e
     
+@mcp.tool()
+def insert_text(text: str, namespace: str, metadata: dict) -> bool:
+    """
+    Inserts a text into a specific namespace with the given metadata.
 
+    Args:
+        text: The text to insert.
+        namespace: The namespace to insert the text into.
+        metadata: A dictionary containing the metadata for the text.
+
+    Returns:
+        True if the text was inserted successfully, False otherwise.
+    """
+    try:
+        # Embed the text
+        text_embedding = embed(text)
+        if text_embedding is None:
+            return False
+
+        # Insert the text into Pinecone
+        index.upsert(
+            vectors=[{
+                "id": str(uuid.uuid4()),
+                "values": text_embedding,
+                "metadata": metadata
+            }],
+            namespace=namespace
+        )
+        return True
+    except Exception as e:
+        print(f"An error occurred during text insertion: {e}")
+        return False
+    
     
