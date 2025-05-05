@@ -77,7 +77,7 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
         return "results"
     except Exception as e:
         print(f"An error occurred during Pinecone search: {e}")
-        return e
+        return "error"
     
 @mcp.tool()
 def insert_text(text: str, namespace: str, metadata: dict) -> bool:
