@@ -63,16 +63,13 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
         if query_embedding is None:
             return "no query embedding"
 
-        # Search Pinecone for the most relevant documents
-        query_args = {
-            "top_k": 3,
-            "include_metadata": True,
-            "vector": query_embedding,
-            "namespace": namespace
-        }
-        if filter:
-            query_args["filter"] = filter
-        results = index.query(**query_args)
+        results = index.query(
+            namespace=namespace,
+            top_k=3,
+            include_metadata=True,
+            vector=query_embedding,
+            # filter=filter
+        )
         return results if results else ["no results found"]
     except Exception as e:
         print(f"An error occurred during Pinecone search: {e}")
