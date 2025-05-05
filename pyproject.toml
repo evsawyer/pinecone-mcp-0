@@ -1,0 +1,22 @@
+[project]
+name = "pinecone-mcp-0"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { email = "evan@ivc.media" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastmcp>=2.2.8",
+    "openai>=1.77.0",
+    "pinecone>=6.0.2",
+    "uuid>=1.30",
+]
+
+[project.scripts]
+pinecone-mcp-0 = "pinecone_mcp_0:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
