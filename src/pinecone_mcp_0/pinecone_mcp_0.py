@@ -4,6 +4,9 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import uuid
 import os
+from pydantic import BaseModel, Field
+from typing import Optional
+
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -13,6 +16,19 @@ mcp = FastMCP("Pinecone")
 
 pc = Pinecone(api_key=PINECONE_API_KEY)
 index = pc.Index("text-embedding-3-small-index")
+
+class MetadataFilter(BaseModel):
+    """
+    Represents a metadata filter for Pinecone queries.
+
+    Attributes:
+        key: The key to filter on.
+        value: The value to filter on.
+    """
+    key: str
+    value: str | int | float | bool
+
+
 
 @mcp.tool()
 def embed(query_text: str) -> list[float] | None:
@@ -43,7 +59,7 @@ def embed(query_text: str) -> list[float] | None:
         return None
     
 @mcp.tool()
-def search_pinecone(query_text: str, namespace: str, filter: dict[str, str | int | float | bool] | None = None) -> list[str] | None:
+def search_pinecone(query_text: str, namespace: str, filter: dict) -> list[str] | None:
 
     """
     Searches Pinecone for the most relevant documents based on the given query text,
