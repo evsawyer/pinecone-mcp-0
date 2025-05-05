@@ -70,7 +70,16 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
             vector=query_embedding
             # filter=filter
         )
-        return results if results else ["no results found"]
+        # Extract key data from results
+        key_data = []
+        for match in results.get('matches', []):
+            key_data.append({
+                'id': match.get('id'),
+                'score': match.get('score'),
+                'metadata': match.get('metadata', {})
+            })
+
+        return key_data if key_data else "No matches found"
     except Exception as e:
         print(f"An error occurred during Pinecone search: {e}")
         return [f"An error occurred during Pinecone search: {e}"]
