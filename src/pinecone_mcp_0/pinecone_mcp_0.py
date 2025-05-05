@@ -14,6 +14,7 @@ mcp = FastMCP("Pinecone")
 pc = Pinecone(api_key=PINECONE_API_KEY)
 index = pc.Index("text-embedding-3-small-index")
 
+@mcp.tool()
 def embed(query_text: str) -> list[float] | None:
     client = OpenAI()
 
@@ -39,7 +40,7 @@ def embed(query_text: str) -> list[float] | None:
         return embedding
     except Exception as e:
         print(f"An error occurred during embedding: {e}")
-        return None
+        return [f"An error occurred during embedding: {e}"]
     
 @mcp.tool()
 def search_pinecone(query_text: str, namespace: str, filter: dict | None = None) -> list[str] | None:
