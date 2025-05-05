@@ -44,7 +44,7 @@ def embed(query_text: str) -> list[float] | None:
     
 @mcp.tool()
 def search_pinecone(query_text: str, namespace: str, filter: dict | None = None) -> list[str] | None:
-    print("search_pinecone")
+
     """
     Searches Pinecone for the most relevant documents based on the given query text,
     optionally within a specific namespace and applying a metadata filter.
@@ -73,10 +73,10 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
         if filter:
             query_args["filter"] = filter
         results = index.query(**query_args)
-        return results
+        return results if results else ["no results found"]
     except Exception as e:
         print(f"An error occurred during Pinecone search: {e}")
-        return f"An error occurred during Pinecone search: {e}"
+        return [f"An error occurred during Pinecone search: {e}"]
     
 @mcp.tool()
 def insert_text(text: str, namespace: str, metadata: dict) -> bool:
