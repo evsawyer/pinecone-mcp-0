@@ -73,7 +73,8 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
             
         results = index.query(**query_args)
 
-        return results
+        # return results
+        return "results"
     except Exception as e:
         print(f"An error occurred during Pinecone search: {e}")
         return e
