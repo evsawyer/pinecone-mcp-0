@@ -67,7 +67,7 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
             namespace=namespace,
             top_k=3,
             include_metadata=True,
-            vector=query_embedding,
+            vector=query_embedding
             # filter=filter
         )
         return results if results else ["no results found"]
