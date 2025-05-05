@@ -68,7 +68,7 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
             top_k=3,
             include_metadata=True,
             vector=query_embedding
-            # filter=filter
+            filter=filter
         )
         # Extract key data from results
         key_data = []
