@@ -62,8 +62,8 @@ def embed(query_text: str) -> list[float] | None:
 def search_pinecone(query_text: str, namespace: str, filter: dict) -> list[str] | None:
 # def search_pinecone(query_text: str, namespace: str) -> list[str] | None:
     """
-    Searches Pinecone for the most relevant documents based on the given query text,
-    optionally within a specific namespace and applying a metadata filter.
+    Searches Pinecone for the most relevant documents based on the given query text within a specific namespace and applying a metadata filter 
+    (if there is no filter, input the filter as an empty dictionary).
 
     Args:
         query_text: The text to search for.
