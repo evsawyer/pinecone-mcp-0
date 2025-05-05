@@ -59,7 +59,7 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
         # Embed the query text
         query_embedding = embed(query_text)
         if query_embedding is None:
-            return None
+            return "no query embedding"
 
         # Search Pinecone for the most relevant documents
         query_args = {
