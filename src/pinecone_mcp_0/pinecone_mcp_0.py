@@ -43,7 +43,7 @@ def embed(query_text: str) -> list[float] | None:
         return None
     
 @mcp.tool()
-def search_pinecone(query_text: str, namespace: str, filter: dict | None = None) -> list[str] | None:
+def search_pinecone(query_text: str, namespace: str, filter: dict[str, str | int | float | bool] | None = None) -> list[str] | None:
 
     """
     Searches Pinecone for the most relevant documents based on the given query text,
@@ -70,7 +70,7 @@ def search_pinecone(query_text: str, namespace: str, filter: dict | None = None)
             vector=query_embedding,
             filter=filter
         )
-        # Extract key data from results
+
         key_data = []
         for match in results.get('matches', []):
             key_data.append({
