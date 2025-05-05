@@ -1,2 +1,4 @@
+from .pinecone_mcp_0 import mcp
+
 def main() -> None:
-    print("Hello from pinecone-mcp-0!")
+    mcp.run()
