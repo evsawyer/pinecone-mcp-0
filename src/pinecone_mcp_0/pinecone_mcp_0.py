@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import uuid
 import os
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Dict, Type
 
 load_dotenv()
 
@@ -17,18 +17,25 @@ mcp = FastMCP("Pinecone")
 pc = Pinecone(api_key=PINECONE_API_KEY)
 index = pc.Index("text-embedding-3-small-index")
 
-class MetadataFilter(BaseModel):
-    """
-    Represents a metadata filter for Pinecone queries.
+class FirstNamespaceSchema(BaseModel):
+    author: str = Field(description="Author of the document")
+    file_id: int = Field(description="Unique identifier for the file")
+    industry: str = Field(description="Industry category the document belongs to")
+    original_text: str = Field(description="The original text content of the document")
 
-    Attributes:
-        key: The key to filter on.
-        value: The value to filter on.
-    """
-    key: str
-    value: str | int | float | bool
+    class Config:
+        extra = "forbid"
+# Add additional schemas here
+NAMESPACE_SCHEMAS: Dict[str, Type[BaseModel]] = {
+    "first_namespace": FirstNamespaceSchema
+    # Add more namespaces as needed
+}
 
-
+def get_namespace_schema(namespace: str) -> Type[BaseModel]:
+    try:
+        return NAMESPACE_SCHEMAS[namespace]
+    except KeyError:
+        raise ValueError(f"Unknown namespace: {namespace}")
 
 @mcp.tool()
 def embed(query_text: str) -> list[float] | None:
@@ -99,9 +106,9 @@ def search_pinecone(query_text: str, namespace: str, filter: dict) -> list[str] 
     except Exception as e:
         print(f"An error occurred during Pinecone search: {e}")
         return [f"An error occurred during Pinecone search: {e}"]
-    
+
 @mcp.tool()
-def insert_text(text: str, namespace: str, metadata: dict) -> bool:
+def insert_text(namespace: str, data: FirstNamespaceSchema) -> bool:
     """
     Inserts a text into a specific namespace with the given metadata.
 
@@ -115,7 +122,7 @@ def insert_text(text: str, namespace: str, metadata: dict) -> bool:
     """
     try:
         # Embed the text
-        text_embedding = embed(text)
+        text_embedding = embed(data.original_text)
         if text_embedding is None:
             return False
 
@@ -124,7 +131,7 @@ def insert_text(text: str, namespace: str, metadata: dict) -> bool:
             vectors=[{
                 "id": str(uuid.uuid4()),
                 "values": text_embedding,
-                "metadata": metadata
+                "metadata": data.model_dump()
             }],
             namespace=namespace
         )
